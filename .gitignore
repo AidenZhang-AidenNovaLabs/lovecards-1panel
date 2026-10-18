@@ -5,3 +5,5 @@ _ref-voicehub-1panel/
 .DS_Store
 Thumbs.db
 *.log
+
+tools/
