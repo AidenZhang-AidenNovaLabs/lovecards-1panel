@@ -81,23 +81,6 @@ additionalProperties:
       random: true
       required: true
       type: password
-    - default: ":80"
-      envKey: WEB_SERVER_NAME
-      labelEn: "Server name"
-      labelZh: "站点监听"
-      label:
-        en: "Server name"
-        es-es: "Nombre del servidor"
-        ja: "サーバー名"
-        ms: "Nama pelayan"
-        pt-br: "Nome do servidor"
-        ru: "Имя сервера"
-        ko: "서버 이름"
-        zh-Hant: "站點監聽"
-        zh: "站点监听"
-        tr: "Sunucu adı"
-      required: true
-      type: text
     - default: 80
       envKey: PANEL_APP_PORT_HTTP
       labelEn: Port

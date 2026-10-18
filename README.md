@@ -35,7 +35,6 @@ sudo apt update && sudo apt install whiptail python3 curl
 3. 表单里：
    - **数据库服务**：选择已安装的 MySQL  
    - **数据库名 / 用户 / 密码**：默认随机生成，一般不用改  
-   - **站点监听**：默认 `:80`  
    - **端口**：默认 `80`
 4. 安装完成后打开 `http://服务器:端口`，完成 LoveCards 网页向导。  
    向导里的数据库主机填 1Panel 显示的数据库主机（同一 `1panel-network`），库名/用户/密码与表单一致。

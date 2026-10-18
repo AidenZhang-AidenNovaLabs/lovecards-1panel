@@ -48,8 +48,12 @@ assert "value: mysql" in form
 assert "type: service" in form
 assert "envKey: PANEL_DB_HOST" in form
 assert form.count("envKey: PANEL_DB_HOST") == 1  # only in child selector
-for env_key in ("PANEL_DB_NAME", "PANEL_DB_USER", "PANEL_DB_USER_PASSWORD", "WEB_SERVER_NAME", "PANEL_APP_PORT_HTTP"):
+for env_key in ("PANEL_DB_NAME", "PANEL_DB_USER", "PANEL_DB_USER_PASSWORD", "PANEL_APP_PORT_HTTP"):
     assert f"envKey: {env_key}" in form, env_key
+assert "WEB_SERVER_NAME" not in form
+assert "字符集" not in form
+assert 'SERVER_NAME: ":80"' in compose
+assert "CHARSET = utf8mb4" in init  # hardcoded, not a form field
 assert "type: password" in form
 assert "random: true" in form
 assert "MYSQL_ROOT_PASSWORD" not in form
