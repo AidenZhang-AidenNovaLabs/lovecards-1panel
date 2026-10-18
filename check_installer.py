@@ -51,6 +51,8 @@ assert "docker load" in text
 assert 'work_root="$base_dir/1panel/resource/apps/.app-backups/lovecards"' in text
 assert 'stage=$(mktemp -d "$work_root/' in text
 assert 'backup=$(mktemp -d "$work_root/' in text
+assert "sweep_local_leftovers" in text
+assert "已移出 local 残留目录" in text
 assert '.lovecards.stage' not in text.split("work_root=")[0]  # not under local_root default
 
 blocks = text.split("<<'PY'\n")[1:]

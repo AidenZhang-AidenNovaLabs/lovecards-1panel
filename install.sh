@@ -130,6 +130,22 @@ app_dir="$local_root/lovecards"
 work_root="$base_dir/1panel/resource/apps/.app-backups/lovecards"
 mkdir -p "$work_root"
 [ -d "$work_root" ] && [ -w "$work_root" ] || fail "备份目录不可写：$work_root"
+
+# 1Panel 同步会把 local/ 下每个子目录当应用；旧版脚本可能留下 .lovecards.* 备份。
+# 一律挪到 work_root，避免「data.yml 文件不存在」同步告警。
+sweep_local_leftovers() {
+    for d in "$local_root"/.lovecards.*; do
+        [ -e "$d" ] || continue
+        dest="$work_root/$(basename "$d")"
+        if [ -e "$dest" ]; then
+            rm -rf -- "$dest"
+        fi
+        mv "$d" "$dest" 2>/dev/null || rm -rf -- "$d"
+        printf '已移出 local 残留目录：%s\n' "$(basename "$d")" >&2
+    done
+}
+sweep_local_leftovers
+
 [ ! -L "$app_dir" ] || fail "拒绝替换符号链接：$app_dir"
 if [ -e "$app_dir" ]; then
     [ -d "$app_dir" ] && [ -f "$app_dir/data.yml" ] || fail "目标不是已识别的应用目录：$app_dir"
@@ -431,6 +447,7 @@ if image_present; then
     image_note="镜像已就绪：$IMAGE_NAME"
 fi
 
+sweep_local_leftovers
 ui_msg "完成。请在 1Panel 刷新本地应用并安装 LoveCards / latest。
 
 目标：$app_dir
