@@ -55,11 +55,18 @@ for block in blocks:
 
 download = "\n".join(block.split("\nPY\n")[0] for block in blocks[1:])
 for guard in (
-    "parsed.netloc != expected_host",
+    "ALLOWED_HOSTS",
+    "objects.githubusercontent.com",
+    "release-assets.githubusercontent.com",
     "not ip.is_global or ip.is_reserved or ip.is_multicast",
     "'--resolve'",
     "'--noproxy'",
-    "result.stdout != '200'",
+    "'--proto-redir'",
+    "'=https'",
+    "'--location'",
+    "'--max-redirs'",
+    "status != '200'",
+    "final_host not in ALLOWED_HOSTS",
     "'..' in path.parts",
     "stat.S_ISLNK(mode)",
     "docker",
@@ -67,9 +74,9 @@ for guard in (
 ):
     assert guard in download, guard
 
-# Installer must not follow redirects
-assert "'--location'" not in download
-assert "' -L '" not in download and '"-L"' not in download
+# Must not allow non-HTTPS redirect protocols
+assert "'--proto-redir', '=https'" in download
+assert "'-L'" not in download.split()
 
 cleanup = text[text.index("cleanup() {") : text.index("trap cleanup 0")]
 with tempfile.TemporaryDirectory() as temp:

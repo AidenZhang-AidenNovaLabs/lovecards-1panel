@@ -257,39 +257,67 @@ required = set(sys.argv[6].split())
 local_template = sys.argv[7].strip()
 
 
-def https_guard(url: str, expected_host: str) -> None:
-    parsed = urlsplit(url)
-    if parsed.scheme != 'https' or parsed.netloc != expected_host:
-        sys.exit(f'拒绝非官方 HTTPS 地址：{url}')
+# GitHub Release 下载会 302 到对象存储；仅允许这些官方主机参与跳转。
+ALLOWED_HOSTS = {
+    'github.com',
+    'codeload.github.com',
+    'raw.githubusercontent.com',
+    'objects.githubusercontent.com',
+    'release-assets.githubusercontent.com',
+}
+
+
+def public_addresses(hostname: str) -> set:
     addresses = {
         ipaddress.ip_address(row[4][0])
-        for row in socket.getaddrinfo(parsed.hostname, 443, type=socket.SOCK_STREAM)
+        for row in socket.getaddrinfo(hostname, 443, type=socket.SOCK_STREAM)
     }
     if not addresses or any(not ip.is_global or ip.is_reserved or ip.is_multicast for ip in addresses):
-        sys.exit('DNS 包含本地、私有或保留地址，拒绝请求。')
+        sys.exit(f'DNS 包含本地、私有或保留地址，拒绝请求：{hostname}')
+    return addresses
 
 
-def fetch(url: str, dest: Path, expected_host: str, max_bytes: int) -> None:
+def https_guard(url: str, expected_host: str | None = None) -> None:
+    parsed = urlsplit(url)
+    if parsed.scheme != 'https' or not parsed.hostname:
+        sys.exit(f'拒绝非官方 HTTPS 地址：{url}')
+    if expected_host is not None and parsed.netloc != expected_host:
+        sys.exit(f'拒绝非官方 HTTPS 地址：{url}')
+    if parsed.hostname not in ALLOWED_HOSTS:
+        sys.exit(f'拒绝未授权主机：{parsed.hostname}')
+    public_addresses(parsed.hostname)
+
+
+def fetch(url: str, dest: Path, expected_host: str | None, max_bytes: int) -> None:
     https_guard(url, expected_host)
     parsed = urlsplit(url)
-    addresses = {
-        ipaddress.ip_address(row[4][0])
-        for row in socket.getaddrinfo(parsed.hostname, 443, type=socket.SOCK_STREAM)
-    }
+    addresses = public_addresses(parsed.hostname)
     ip = sorted(addresses, key=lambda a: (a.version, int(a)))[0]
     pin = str(ip) if ip.version == 4 else '[' + str(ip) + ']'
     result = subprocess.run(
         [
             'curl', '--fail', '--silent', '--show-error', '--noproxy', '*',
-            '--proto', '=https', '--connect-timeout', '15', '--max-time', '1800',
+            '--proto', '=https', '--proto-redir', '=https', '--max-redirs', '5',
+            '--location', '--connect-timeout', '15', '--max-time', '1800',
             '--max-filesize', str(max_bytes), '--resolve', parsed.hostname + ':443:' + pin,
-            '--output', str(dest), '--write-out', '%{http_code}', url,
+            '--output', str(dest),
+            '--write-out', '%{http_code}\n%{url_effective}',
+            url,
         ],
         capture_output=True,
         text=True,
     )
-    if result.returncode or result.stdout != '200':
-        sys.exit('下载失败（不接受重定向）：' + (result.stderr.strip() or result.stdout))
+    lines = [line.strip() for line in result.stdout.splitlines() if line.strip()]
+    status = lines[0] if lines else ''
+    final_url = lines[-1] if lines else ''
+    if result.returncode or status != '200':
+        sys.exit('下载失败：' + (result.stderr.strip() or result.stdout or status))
+    try:
+        final_host = urlsplit(final_url).hostname or ''
+    except Exception:
+        final_host = ''
+    if final_host not in ALLOWED_HOSTS:
+        sys.exit(f'重定向到未授权主机：{final_url or final_host or final_url}')
     if dest.stat().st_size > max_bytes:
         sys.exit('下载文件超过限制。')
 
