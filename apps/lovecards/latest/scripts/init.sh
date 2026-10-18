@@ -46,7 +46,10 @@ for line in panel.splitlines():
     if '=' not in line or line.lstrip().startswith('#'):
         continue
     k, v = line.split('=', 1)
-    keys[k.strip()] = v.strip()
+    v = v.strip()
+    if len(v) >= 2 and v[0] == v[-1] and v[0] in "\"'":
+        v = v[1:-1]
+    keys[k.strip()] = v
 host = keys.get('PANEL_DB_HOST', '')
 port = keys.get('PANEL_DB_PORT', '3306') or '3306'
 name = keys.get('PANEL_DB_NAME', '')
