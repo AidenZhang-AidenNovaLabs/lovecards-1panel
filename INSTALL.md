@@ -3,7 +3,8 @@
 ## Linux TUI 安装
 
 ```bash
-(f=$(mktemp) && trap 'rm -f "$f"' EXIT && curl --fail --silent --show-error --proto '=https' -o "$f" https://raw.githubusercontent.com/AidenZhang-AidenNovaLabs/lovecards-1panel/main/install.sh && sudo sh "$f")
+(f=$(mktemp) && trap 'rm -f "$f"' EXIT && curl --fail --silent --show-error --proto '=https' -o "$f" \
+  "https://raw.githubusercontent.com/AidenZhang-AidenNovaLabs/lovecards-1panel/main/install.sh?t=$(date +%s)" && sudo sh "$f")
 ```
 
 无 `whiptail`/`dialog` 时回退文本菜单；`LOVECARDS_TEXT=1` 强制文本模式。

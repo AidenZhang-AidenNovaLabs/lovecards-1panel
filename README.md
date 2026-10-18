@@ -20,7 +20,8 @@ sudo apt update && sudo apt install whiptail python3 curl
 一行下载安装器并打开 TUI：
 
 ```bash
-(f=$(mktemp) && trap 'rm -f "$f"' EXIT && curl --fail --silent --show-error --proto '=https' -o "$f" https://raw.githubusercontent.com/AidenZhang-AidenNovaLabs/lovecards-1panel/main/install.sh && sudo sh "$f")
+(f=$(mktemp) && trap 'rm -f "$f"' EXIT && curl --fail --silent --show-error --proto '=https' -o "$f" \
+  "https://raw.githubusercontent.com/AidenZhang-AidenNovaLabs/lovecards-1panel/main/install.sh?t=$(date +%s)" && sudo sh "$f")
 ```
 
 菜单：**安装 / 更新模板并加载官方镜像** · 检查依赖 · 仅删除模板 · 退出。  
