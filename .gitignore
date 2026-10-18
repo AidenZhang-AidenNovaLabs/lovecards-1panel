@@ -1,0 +1,7 @@
+# Local reference clone
+_ref-voicehub-1panel/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.log

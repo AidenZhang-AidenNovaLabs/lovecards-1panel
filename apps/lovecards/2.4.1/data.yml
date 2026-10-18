@@ -1,0 +1,90 @@
+additionalProperties:
+  formFields:
+    - default: ":80"
+      envKey: WEB_SERVER_NAME
+      labelEn: "Server name"
+      labelZh: "站点监听"
+      label:
+        en: "Server name"
+        es-es: "Nombre del servidor"
+        ja: "サーバー名"
+        ms: "Nama pelayan"
+        pt-br: "Nome do servidor"
+        ru: "Имя сервера"
+        ko: "서버 이름"
+        zh-Hant: "站點監聽"
+        zh: "站点监听"
+        tr: "Sunucu adı"
+      required: true
+      type: text
+    - default: ""
+      envKey: MYSQL_ROOT_PASSWORD
+      labelEn: "MySQL root password"
+      labelZh: "MySQL root 密码"
+      label:
+        en: "MySQL root password"
+        es-es: "Contraseña root de MySQL"
+        ja: "MySQL root パスワード"
+        ms: "Kata laluan root MySQL"
+        pt-br: "Senha root do MySQL"
+        ru: "Пароль root MySQL"
+        ko: "MySQL root 비밀번호"
+        zh-Hant: "MySQL root 密碼"
+        zh: "MySQL root 密码"
+        tr: "MySQL root parolası"
+      random: true
+      required: true
+      type: password
+    - default: lovecards
+      envKey: MYSQL_PASSWORD
+      labelEn: "MySQL password"
+      labelZh: "MySQL 密码"
+      label:
+        en: "MySQL password"
+        es-es: "Contraseña de MySQL"
+        ja: "MySQL パスワード"
+        ms: "Kata laluan MySQL"
+        pt-br: "Senha do MySQL"
+        ru: "Пароль MySQL"
+        ko: "MySQL 비밀번호"
+        zh-Hant: "MySQL 密碼"
+        zh: "MySQL 密码"
+        tr: "MySQL parolası"
+      random: true
+      required: true
+      type: password
+    - default: Asia/Shanghai
+      envKey: MYSQL_TZ
+      labelEn: "MySQL timezone"
+      labelZh: "MySQL 时区"
+      label:
+        en: "MySQL timezone"
+        es-es: "Zona horaria de MySQL"
+        ja: "MySQL タイムゾーン"
+        ms: "Zon masa MySQL"
+        pt-br: "Fuso horário do MySQL"
+        ru: "Часовой пояс MySQL"
+        ko: "MySQL 시간대"
+        zh-Hant: "MySQL 時區"
+        zh: "MySQL 时区"
+        tr: "MySQL saat dilimi"
+      required: true
+      type: text
+    - default: 80
+      envKey: PANEL_APP_PORT_HTTP
+      labelEn: Port
+      labelZh: "端口"
+      label:
+        en: Port
+        es-es: Puerto
+        ja: "ポート"
+        ms: Port
+        pt-br: Porta
+        ru: "Порт"
+        ko: "포트"
+        zh-Hant: "埠"
+        zh: "端口"
+        tr: "Bağlantı Noktası"
+      required: true
+      rule: paramPort
+      type: number

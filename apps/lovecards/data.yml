@@ -1,0 +1,31 @@
+name: LoveCards
+tags:
+  - Tool
+title: "倾心轻言·微型社区"
+description: "轻量、快速、友好的微型社区系统"
+additionalProperties:
+  key: lovecards
+  name: LoveCards
+  tags:
+    - Tool
+  shortDescZh: "轻量、快速、友好的微型社区系统"
+  shortDescEn: "Lightweight, fast and friendly micro-community system"
+  description:
+    en: "Lightweight, fast and friendly micro-community system"
+    es-es: "Sistema de microcomunidad ligero, rápido y amigable"
+    ja: "軽量・高速・フレンドリーなマイクロコミュニティシステム"
+    ms: "Sistem mikro-komuniti yang ringan, pantas dan mesra"
+    pt-br: "Sistema de microcomunidade leve, rápido e amigável"
+    ru: "Легкая, быстрая и удобная микросообщество-система"
+    ko: "경량·고속·친근한 마이크로 커뮤니티 시스템"
+    zh-Hant: "輕量、快速、友好的微型社群系統"
+    zh: "轻量、快速、友好的微型社区系统"
+    tr: "Hafif, hızlı ve kullanıcı dostu mikro topluluk sistemi"
+  type: website
+  crossVersionUpdate: true
+  limit: 0
+  architectures:
+    - amd64
+  website: https://lovecards.cn
+  github: https://github.com/LoveCards/LoveCardsV2
+  document: https://docs.lovecards.cn/
