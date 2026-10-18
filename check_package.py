@@ -73,6 +73,9 @@ assert "docker cp" in init
 assert "data/web/public/index.php" in init
 assert "lovecards-web-frankenphp:latest" in init
 assert "HOST_IP" in init and "0.0.0.0" in init
+assert "8.0.99" in init and "8.99.99" in init
+assert "data/web/patch/Common.php" in init
+assert "data/web/patch/Common.php:/app/app/common/Common.php" in compose
 
 # .env must be a file mount target, not a directory
 env_path = APP / "latest" / "data" / "web" / ".env"

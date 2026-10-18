@@ -37,6 +37,32 @@ if [ ! -f data/web/public/index.php ]; then
     exit 1
 fi
 
+# LoveCards InstallEnvironment caps PHP at 8.0.99, but the official image ships 8.4.x.
+# Overlay Common.php with the same file and a raised upper bound so the wizard can continue.
+mkdir -p data/web/patch
+if [ ! -f data/web/patch/Common.php ]; then
+    if ! command -v docker >/dev/null 2>&1; then
+        echo 'docker not found; cannot patch Common.php from image' >&2
+        exit 1
+    fi
+    cid=$(docker create "$IMAGE_NAME")
+    docker cp "$cid:/app/app/common/Common.php" data/web/patch/Common.php
+    docker rm "$cid" >/dev/null
+fi
+python3 - <<'PY'
+from pathlib import Path
+p = Path('data/web/patch/Common.php')
+text = p.read_text(encoding='utf-8')
+if "'8.0.99'" in text:
+    text = text.replace("'8.0.99'", "'8.99.99'")
+    p.write_text(text, encoding='utf-8')
+    print('patched PHP upper bound 8.0.99 -> 8.99.99')
+elif "'8.99.99'" in text:
+    print('PHP upper bound already raised')
+else:
+    raise SystemExit('InstallEnvironment php upper bound not found in Common.php')
+PY
+
 # 1Panel 默认 HOST_IP=127.0.0.1（仅本机），外网访问不到。
 # 社区站需要对外提供服务，这里改成 0.0.0.0；若只想走反代，可自行改回 127.0.0.1。
 if grep -q "^HOST_IP=" .env; then

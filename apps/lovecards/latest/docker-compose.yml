@@ -19,6 +19,7 @@ services:
       - ./data/web/config:/app/config
       - ./data/web/public:/app/public
       - ./data/web/.env:/app/.env
+      - ./data/web/patch/Common.php:/app/app/common/Common.php
     labels:
       createdBy: Apps
 networks:
