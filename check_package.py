@@ -63,12 +63,15 @@ declared = set(re.findall(r"envKey: (\w+)", form))
 referenced = set(re.findall(r"\$\{(\w+)\}", compose))
 assert referenced - declared <= {"CONTAINER_NAME", "PANEL_DB_PORT"}, referenced - declared
 
-# init.sh writes ThinkPHP .env from 1Panel .env
+# init.sh writes ThinkPHP .env from 1Panel .env and seeds public/config from image
 assert init.startswith("#!/bin/bash")
 assert "Generated from official installation evidence:" in init
 assert "data/web/.env" in init
 assert "PANEL_DB_HOST" in init
 assert "[DATABASE]" in init
+assert "docker cp" in init
+assert "data/web/public/index.php" in init
+assert "lovecards-web-frankenphp:latest" in init
 
 # .env must be a file mount target, not a directory
 env_path = APP / "latest" / "data" / "web" / ".env"
