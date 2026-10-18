@@ -47,6 +47,11 @@ assert "LOVECARDS_TEXT" in text and "回退到文本菜单" in text
 assert "lovecards-web-frankenphp:latest" in text
 assert "LoveCards/LoveCardsV2/releases/download" in text
 assert "docker load" in text
+# 1Panel sync scans local/*; backups/staging must live outside local/
+assert 'work_root="$base_dir/1panel/resource/apps/.app-backups/lovecards"' in text
+assert 'stage=$(mktemp -d "$work_root/' in text
+assert 'backup=$(mktemp -d "$work_root/' in text
+assert '.lovecards.stage' not in text.split("work_root=")[0]  # not under local_root default
 
 blocks = text.split("<<'PY'\n")[1:]
 assert len(blocks) >= 2

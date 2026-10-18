@@ -126,6 +126,10 @@ PY
 local_root="$base_dir/1panel/resource/apps/local"
 [ -d "$local_root" ] && [ -w "$local_root" ] || fail "本地应用目录不存在或不可写：$local_root"
 app_dir="$local_root/lovecards"
+# 1Panel 同步会扫描 local/ 下所有目录；备份/暂存必须放在 local/ 外。
+work_root="$base_dir/1panel/resource/apps/.app-backups/lovecards"
+mkdir -p "$work_root"
+[ -d "$work_root" ] && [ -w "$work_root" ] || fail "备份目录不可写：$work_root"
 [ ! -L "$app_dir" ] || fail "拒绝替换符号链接：$app_dir"
 if [ -e "$app_dir" ]; then
     [ -d "$app_dir" ] && [ -f "$app_dir/data.yml" ] || fail "目标不是已识别的应用目录：$app_dir"
@@ -217,7 +221,7 @@ else
     exit 0
 fi
 
-stage=$(mktemp -d "$local_root/.lovecards.stage.XXXXXX")
+stage=$(mktemp -d "$work_root/.lovecards.stage.XXXXXX")
 
 progress_run() {
     if [ -n "${tui:-}" ]; then
@@ -416,7 +420,7 @@ if [ -f "$stage/failed" ]; then
 fi
 [ -d "$stage/lovecards" ] || fail '应用包准备失败；原目录未修改。'
 if [ -d "$app_dir" ]; then
-    backup=$(mktemp -d "$local_root/.lovecards.backup.XXXXXX")
+    backup=$(mktemp -d "$work_root/.lovecards.backup.XXXXXX")
     mv "$app_dir" "$backup/lovecards" || fail '备份失败；未安装新目录。'
 fi
 mv "$stage/lovecards" "$app_dir" || fail '替换失败，将恢复旧目录。'
