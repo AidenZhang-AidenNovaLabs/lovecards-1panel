@@ -72,6 +72,7 @@ assert "[DATABASE]" in init
 assert "docker cp" in init
 assert "data/web/public/index.php" in init
 assert "lovecards-web-frankenphp:latest" in init
+assert "HOST_IP" in init and "0.0.0.0" in init
 
 # .env must be a file mount target, not a directory
 env_path = APP / "latest" / "data" / "web" / ".env"

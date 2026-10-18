@@ -37,6 +37,15 @@ if [ ! -f data/web/public/index.php ]; then
     exit 1
 fi
 
+# 1Panel 默认 HOST_IP=127.0.0.1（仅本机），外网访问不到。
+# 社区站需要对外提供服务，这里改成 0.0.0.0；若只想走反代，可自行改回 127.0.0.1。
+if grep -q "^HOST_IP=" .env; then
+    sed -i "s/^HOST_IP=.*/HOST_IP='0.0.0.0'/" .env
+else
+    printf "\nHOST_IP='0.0.0.0'\n" >> .env
+fi
+echo "HOST_IP forced to 0.0.0.0 for external access"
+
 python3 - <<'PY'
 from pathlib import Path
 root = Path('.')
