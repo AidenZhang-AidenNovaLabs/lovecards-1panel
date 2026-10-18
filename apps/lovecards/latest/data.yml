@@ -1,0 +1,118 @@
+additionalProperties:
+  formFields:
+    - child:
+        default: ""
+        envKey: PANEL_DB_HOST
+        required: true
+        type: service
+      default: mysql
+      envKey: PANEL_DB_TYPE
+      labelEn: Database
+      labelZh: "数据库服务"
+      label:
+        en: Database
+        es-es: "Base de datos"
+        ja: "データベースサービス"
+        ms: "Perkhidmatan Pangkalan Data"
+        pt-br: "Serviço de Banco de Dados"
+        ru: "Сервис базы данных"
+        ko: "데이터베이스 서비스"
+        zh-Hant: "資料庫服務"
+        zh: "数据库服务"
+        tr: "Veritabanı Hizmeti"
+      required: true
+      type: apps
+      values:
+        - label: MySQL
+          value: mysql
+    - default: lovecards
+      envKey: PANEL_DB_NAME
+      labelEn: "Database name"
+      labelZh: "数据库名"
+      label:
+        en: "Database name"
+        es-es: "Nombre de la base de datos"
+        ja: "データベース名"
+        ms: "Nama pangkalan data"
+        pt-br: "Nome do banco de dados"
+        ru: "Имя базы данных"
+        ko: "데이터베이스 이름"
+        zh-Hant: "資料庫名稱"
+        zh: "数据库名"
+        tr: "Veritabanı adı"
+      random: true
+      required: true
+      rule: paramCommon
+      type: text
+    - default: lovecards
+      envKey: PANEL_DB_USER
+      labelEn: "Database username"
+      labelZh: "数据库用户"
+      label:
+        en: "Database username"
+        es-es: "Usuario de la base de datos"
+        ja: "データベースユーザー名"
+        ms: "Nama pengguna pangkalan data"
+        pt-br: "Nome de usuário do banco de dados"
+        ru: "Имя пользователя базы данных"
+        ko: "데이터베이스 사용자 이름"
+        zh-Hant: "資料庫使用者名稱"
+        zh: "数据库用户"
+        tr: "Veritabanı kullanıcı adı"
+      random: true
+      required: true
+      rule: paramCommon
+      type: text
+    - default: lovecards
+      envKey: PANEL_DB_USER_PASSWORD
+      labelEn: "Database password"
+      labelZh: "数据库密码"
+      label:
+        en: "Database password"
+        es-es: "Contraseña de la base de datos"
+        ja: "データベースパスワード"
+        ms: "Kata laluan pangkalan data"
+        pt-br: "Senha do banco de dados"
+        ru: "Пароль базы данных"
+        ko: "데이터베이스 비밀번호"
+        zh-Hant: "資料庫密碼"
+        zh: "数据库密码"
+        tr: "Veritabanı parolası"
+      random: true
+      required: true
+      type: password
+    - default: ":80"
+      envKey: WEB_SERVER_NAME
+      labelEn: "Server name"
+      labelZh: "站点监听"
+      label:
+        en: "Server name"
+        es-es: "Nombre del servidor"
+        ja: "サーバー名"
+        ms: "Nama pelayan"
+        pt-br: "Nome do servidor"
+        ru: "Имя сервера"
+        ko: "서버 이름"
+        zh-Hant: "站點監聽"
+        zh: "站点监听"
+        tr: "Sunucu adı"
+      required: true
+      type: text
+    - default: 80
+      envKey: PANEL_APP_PORT_HTTP
+      labelEn: Port
+      labelZh: "端口"
+      label:
+        en: Port
+        es-es: Puerto
+        ja: "ポート"
+        ms: Port
+        pt-br: Porta
+        ru: "Порт"
+        ko: "포트"
+        zh-Hant: "埠"
+        zh: "端口"
+        tr: "Bağlantı Noktası"
+      required: true
+      rule: paramPort
+      type: number

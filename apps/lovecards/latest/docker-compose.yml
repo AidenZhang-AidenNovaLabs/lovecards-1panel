@@ -1,0 +1,26 @@
+services:
+  lovecards:
+    image: lovecards-web-frankenphp:latest
+    pull_policy: never
+    container_name: "${CONTAINER_NAME}"
+    restart: always
+    networks:
+      - 1panel-network
+    ports:
+      - "${PANEL_APP_PORT_HTTP}:80"
+    environment:
+      SERVER_NAME: "${WEB_SERVER_NAME}"
+      PANEL_DB_HOST: "${PANEL_DB_HOST}"
+      PANEL_DB_PORT: "${PANEL_DB_PORT}"
+      PANEL_DB_NAME: "${PANEL_DB_NAME}"
+      PANEL_DB_USER: "${PANEL_DB_USER}"
+      PANEL_DB_USER_PASSWORD: "${PANEL_DB_USER_PASSWORD}"
+    volumes:
+      - ./data/web/config:/app/config
+      - ./data/web/public:/app/public
+      - ./data/web/.env:/app/.env
+    labels:
+      createdBy: Apps
+networks:
+  1panel-network:
+    external: true

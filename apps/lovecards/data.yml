@@ -26,6 +26,7 @@ additionalProperties:
   limit: 0
   architectures:
     - amd64
+    - arm64
   website: https://lovecards.cn
   github: https://github.com/LoveCards/LoveCardsV2
   document: https://docs.lovecards.cn/

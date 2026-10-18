@@ -2,7 +2,7 @@
   "key": "lovecards",
   "name": "LoveCards",
   "title": "倾心轻言·微型社区",
-  "version": "2.4.1",
+  "version": "latest",
   "description": {
     "en": "Lightweight, fast and friendly micro-community system",
     "es-es": "Sistema de microcomunidad ligero, rápido y amigable",
@@ -19,18 +19,18 @@
   "shortDescEn": "Lightweight, fast and friendly micro-community system",
   "readme": {
     "zh": {
-      "introduction": "是一款轻量、快速、友好于一身的微型社区系统，支持标签、点赞、评论、分享与主题焕肤。",
+      "introduction": "是一款轻量、快速、友好于一身的微型社区系统，支持标签、点赞、评论、分享与主题焕肤。数据库由 1Panel 已安装的 MySQL 提供。",
       "features": [
-        {"title": "轻量即开", "description": "基于 ThinkPHP 8，零配置上线，部署简单。"},
-        {"title": "多彩焕肤", "description": "一键换色换主题，风格随心。"},
+        {"title": "轻量即开", "description": "基于 ThinkPHP 8，部署简单。"},
+        {"title": "接入 1Panel 数据库", "description": "选择已安装的 MySQL，账号密码自动生成，无需再填 root。"},
         {"title": "互动三连", "description": "点赞、评论、分享一气俱全，支持长文与多图。"}
       ]
     },
     "en": {
-      "introduction": "is a lightweight, fast and friendly micro-community system with tags, likes, comments, sharing and theming.",
+      "introduction": "is a lightweight, fast and friendly micro-community system. The database is provided by MySQL already installed in 1Panel.",
       "features": [
         {"title": "Lightweight start", "description": "Built on ThinkPHP 8 with simple deployment."},
-        {"title": "Themes", "description": "Change colors and themes in one click."},
+        {"title": "1Panel database", "description": "Select an installed MySQL; credentials are generated automatically."},
         {"title": "Social features", "description": "Likes, comments and sharing with long posts and images."}
       ]
     }
@@ -41,26 +41,73 @@
   "github": "https://github.com/LoveCards/LoveCardsV2",
   "document": "https://docs.lovecards.cn/",
   "logo": "assets/lovecards-logo.png",
-  "architectures": ["amd64"],
+  "architectures": ["amd64", "arm64"],
   "source_evidence": [
     "https://github.com/LoveCards/LoveCardsV2/blob/dev/.docker/frankenphp/Dockerfile",
     "https://github.com/LoveCards/LoveCardsV2/blob/dev/.docker/frankenphp/docker-compose.yaml",
     "https://github.com/LoveCards/LoveCardsV2/blob/dev/.docker/frankenphp/.env.example",
-    "https://github.com/LoveCards/LoveCardsV2/blob/dev/.docker/frankenphp/install.sh",
-    "https://github.com/LoveCards/LoveCardsV2/blob/dev/.frankenphp/Caddyfile",
-    "https://github.com/LoveCards/LoveCardsV2/blob/dev/.github/workflows/release-buildDocker.yml",
+    "https://github.com/LoveCards/LoveCardsV2/blob/dev/.dev/env/.env.example",
+    "https://github.com/LoveCards/LoveCardsV2/blob/dev/config/database.php",
+    "https://github.com/LoveCards/LoveCardsV2/blob/dev/app/system/controller/Install.php",
     "https://github.com/LoveCards/LoveCardsV2/releases/tag/v2.4.1",
-    "https://github.com/LoveCards/LoveCardsV2#readme",
-    "https://docs.lovecards.cn/Docs/V2/QuickStart/DockerDeployment.html",
-    "https://docs.lovecards.cn/Docs/V2/QuickStart/1panelDeploymen.html"
+    "https://github.com/1Panel-dev/appstore/blob/dev/apps/halo/2.26.1/data.yml",
+    "https://github.com/1Panel-dev/appstore/blob/dev/apps/halo/2.26.1/docker-compose.yml",
+    "https://docs.lovecards.cn/Docs/V2/QuickStart/1panelDeploymen.html",
+    "https://github.com/LoveCards/LoveCardsV2#readme"
+  ],
+  "init_source_evidence": [
+    "https://github.com/LoveCards/LoveCardsV2/blob/dev/.dev/env/.env.example",
+    "https://github.com/LoveCards/LoveCardsV2/blob/dev/config/database.php",
+    "https://github.com/LoveCards/LoveCardsV2/blob/dev/app/system/controller/Install.php"
   ],
   "notes": [
-    "Official image name is lovecards-web-frankenphp:latest (docker save/load artifact in the lovecards-web-frankenphp.zip release), not a public registry image. install.sh loads it via docker load; compose uses pull_policy: never.",
-    "Official Compose maps host 80/443/443-udp. This package exposes a single HTTP port (PANEL_APP_PORT_HTTP -> container 80) so 1Panel reverse proxy can terminate HTTPS; SERVER_NAME stays WEB_SERVER_NAME from the form.",
-    "Official .env only defines WEB_SERVER_NAME, MYSQL_ROOT_PASSWORD, MYSQL_TZ. MYSQL_DATABASE/USER default to lovecards as in official compose. MYSQL_PASSWORD is promoted to a form field (default lovecards) instead of a hardcoded literal for 1Panel secret handling.",
-    "mysql:5.7 matches official Compose; architectures limited to amd64 because the official mysql:5.7 image is amd64-only.",
-    "Volumes and env keys copied from official .docker/frankenphp/docker-compose.yaml. Both services join 1panel-network and use ${CONTAINER_NAME} naming for 1Panel.",
-    "Application runs as the FrankenPHP image default user (root in the official Dockerfile chain). No host init_permissions from official sources; install wizard writes config/public mounts."
+    "User wants rolling latest version like voicehub-1panel: version channel latest, not a pinned 2.4.1 folder.",
+    "Database uses the official Halo apps/child service pattern restricted to mysql (1Panel-managed). No bundled mysql container, no MYSQL_ROOT_PASSWORD form field. PANEL_DB_HOST is declared only in the child selector.",
+    "Image lovecards-web-frankenphp:latest is distributed as docker save/load in the official release zip; install.sh loads it. pull_policy: never on the web service.",
+    "init.sh translates the 1Panel .env (PANEL_DB_*) into ThinkPHP .env [DATABASE] section at data/web/.env, mounted to /app/.env. Source: .dev/env/.env.example and config/database.php env('database.*') keys.",
+    "LoveCards install wizard still imports data.sql and creates lock/RSA. Pre-written .env only supplies connection settings; users complete the web wizard once.",
+    "Architectures amd64/arm64: FrankenPHP official base is multi-arch; MySQL is 1Panel-managed so this package no longer depends on mysql:5.7 amd64-only."
+  ],
+  "init_commands": [
+    "set -eu",
+    "if [ ! -f .env ]; then",
+    "    echo 'missing 1Panel .env' >&2",
+    "    exit 1",
+    "fi",
+    "python3 - <<'PY'",
+    "from pathlib import Path",
+    "import re",
+    "root = Path('.')",
+    "panel = (root / '.env').read_text(encoding='utf-8')",
+    "keys = {}",
+    "for line in panel.splitlines():",
+    "    if '=' not in line or line.lstrip().startswith('#'):",
+    "        continue",
+    "    k, v = line.split('=', 1)",
+    "    keys[k.strip()] = v.strip()",
+    "host = keys.get('PANEL_DB_HOST', '')",
+    "port = keys.get('PANEL_DB_PORT', '3306') or '3306'",
+    "name = keys.get('PANEL_DB_NAME', '')",
+    "user = keys.get('PANEL_DB_USER', '')",
+    "password = keys.get('PANEL_DB_USER_PASSWORD', '')",
+    "if not host or not name or not user:",
+    "    raise SystemExit('PANEL_DB_HOST/NAME/USER missing in .env')",
+    "out = root / 'data' / 'web' / '.env'",
+    "out.parent.mkdir(parents=True, exist_ok=True)",
+    "text = (",
+    "    '[DATABASE]\\n'",
+    "    'TYPE = mysql\\n'",
+    "    f'HOSTNAME = {host}\\n'",
+    "    f'DATABASE = {name}\\n'",
+    "    f'USERNAME = {user}\\n'",
+    "    f'PASSWORD = {password}\\n'",
+    "    f'HOSTPORT = {port}\\n'",
+    "    'CHARSET = utf8mb4\\n'",
+    ")",
+    "out.write_text(text, encoding='utf-8')",
+    "print('wrote', out)",
+    "PY",
+    "chmod 600 data/web/.env || true"
   ],
   "services": [
     {
@@ -78,31 +125,117 @@
       ],
       "volumes": [
         "./data/web/config:/app/config",
-        "./data/web/public:/app/public"
+        "./data/web/public:/app/public",
+        "./data/web/.env:/app/.env"
       ],
       "environment": {
-        "SERVER_NAME": "${WEB_SERVER_NAME}"
-      },
-      "depends_on": ["mysql"]
-    },
-    {
-      "name": "mysql",
-      "image": "mysql:5.7",
-      "volumes": [
-        "./data/mysql/mysql_data:/var/lib/mysql",
-        "./data/mysql/mysql_conf:/etc/mysql/conf.d",
-        "./data/mysql/mysql_logs:/var/log/mysql"
-      ],
-      "environment": {
-        "MYSQL_ROOT_PASSWORD": "${MYSQL_ROOT_PASSWORD}",
-        "MYSQL_DATABASE": "lovecards",
-        "MYSQL_USER": "lovecards",
-        "MYSQL_PASSWORD": "${MYSQL_PASSWORD}",
-        "TZ": "${MYSQL_TZ}"
+        "SERVER_NAME": "${WEB_SERVER_NAME}",
+        "PANEL_DB_HOST": "${PANEL_DB_HOST}",
+        "PANEL_DB_PORT": "${PANEL_DB_PORT}",
+        "PANEL_DB_NAME": "${PANEL_DB_NAME}",
+        "PANEL_DB_USER": "${PANEL_DB_USER}",
+        "PANEL_DB_USER_PASSWORD": "${PANEL_DB_USER_PASSWORD}"
       }
     }
   ],
   "form_fields": [
+    {
+      "child": {
+        "default": "",
+        "envKey": "PANEL_DB_HOST",
+        "required": true,
+        "type": "service"
+      },
+      "default": "mysql",
+      "envKey": "PANEL_DB_TYPE",
+      "labelEn": "Database",
+      "labelZh": "数据库服务",
+      "label": {
+        "en": "Database",
+        "es-es": "Base de datos",
+        "ja": "データベースサービス",
+        "ms": "Perkhidmatan Pangkalan Data",
+        "pt-br": "Serviço de Banco de Dados",
+        "ru": "Сервис базы данных",
+        "ko": "데이터베이스 서비스",
+        "zh-Hant": "資料庫服務",
+        "zh": "数据库服务",
+        "tr": "Veritabanı Hizmeti"
+      },
+      "required": true,
+      "type": "apps",
+      "values": [
+        {
+          "label": "MySQL",
+          "value": "mysql"
+        }
+      ]
+    },
+    {
+      "default": "lovecards",
+      "envKey": "PANEL_DB_NAME",
+      "labelEn": "Database name",
+      "labelZh": "数据库名",
+      "label": {
+        "en": "Database name",
+        "es-es": "Nombre de la base de datos",
+        "ja": "データベース名",
+        "ms": "Nama pangkalan data",
+        "pt-br": "Nome do banco de dados",
+        "ru": "Имя базы данных",
+        "ko": "데이터베이스 이름",
+        "zh-Hant": "資料庫名稱",
+        "zh": "数据库名",
+        "tr": "Veritabanı adı"
+      },
+      "random": true,
+      "required": true,
+      "rule": "paramCommon",
+      "type": "text"
+    },
+    {
+      "default": "lovecards",
+      "envKey": "PANEL_DB_USER",
+      "labelEn": "Database username",
+      "labelZh": "数据库用户",
+      "label": {
+        "en": "Database username",
+        "es-es": "Usuario de la base de datos",
+        "ja": "データベースユーザー名",
+        "ms": "Nama pengguna pangkalan data",
+        "pt-br": "Nome de usuário do banco de dados",
+        "ru": "Имя пользователя базы данных",
+        "ko": "데이터베이스 사용자 이름",
+        "zh-Hant": "資料庫使用者名稱",
+        "zh": "数据库用户",
+        "tr": "Veritabanı kullanıcı adı"
+      },
+      "random": true,
+      "required": true,
+      "rule": "paramCommon",
+      "type": "text"
+    },
+    {
+      "default": "lovecards",
+      "envKey": "PANEL_DB_USER_PASSWORD",
+      "labelEn": "Database password",
+      "labelZh": "数据库密码",
+      "label": {
+        "en": "Database password",
+        "es-es": "Contraseña de la base de datos",
+        "ja": "データベースパスワード",
+        "ms": "Kata laluan pangkalan data",
+        "pt-br": "Senha do banco de dados",
+        "ru": "Пароль базы данных",
+        "ko": "데이터베이스 비밀번호",
+        "zh-Hant": "資料庫密碼",
+        "zh": "数据库密码",
+        "tr": "Veritabanı parolası"
+      },
+      "random": true,
+      "required": true,
+      "type": "password"
+    },
     {
       "default": ":80",
       "envKey": "WEB_SERVER_NAME",
@@ -119,68 +252,6 @@
         "zh-Hant": "站點監聽",
         "zh": "站点监听",
         "tr": "Sunucu adı"
-      },
-      "required": true,
-      "type": "text"
-    },
-    {
-      "default": "",
-      "envKey": "MYSQL_ROOT_PASSWORD",
-      "labelEn": "MySQL root password",
-      "labelZh": "MySQL root 密码",
-      "label": {
-        "en": "MySQL root password",
-        "es-es": "Contraseña root de MySQL",
-        "ja": "MySQL root パスワード",
-        "ms": "Kata laluan root MySQL",
-        "pt-br": "Senha root do MySQL",
-        "ru": "Пароль root MySQL",
-        "ko": "MySQL root 비밀번호",
-        "zh-Hant": "MySQL root 密碼",
-        "zh": "MySQL root 密码",
-        "tr": "MySQL root parolası"
-      },
-      "random": true,
-      "required": true,
-      "type": "password"
-    },
-    {
-      "default": "lovecards",
-      "envKey": "MYSQL_PASSWORD",
-      "labelEn": "MySQL password",
-      "labelZh": "MySQL 密码",
-      "label": {
-        "en": "MySQL password",
-        "es-es": "Contraseña de MySQL",
-        "ja": "MySQL パスワード",
-        "ms": "Kata laluan MySQL",
-        "pt-br": "Senha do MySQL",
-        "ru": "Пароль MySQL",
-        "ko": "MySQL 비밀번호",
-        "zh-Hant": "MySQL 密碼",
-        "zh": "MySQL 密码",
-        "tr": "MySQL parolası"
-      },
-      "random": true,
-      "required": true,
-      "type": "password"
-    },
-    {
-      "default": "Asia/Shanghai",
-      "envKey": "MYSQL_TZ",
-      "labelEn": "MySQL timezone",
-      "labelZh": "MySQL 时区",
-      "label": {
-        "en": "MySQL timezone",
-        "es-es": "Zona horaria de MySQL",
-        "ja": "MySQL タイムゾーン",
-        "ms": "Zon masa MySQL",
-        "pt-br": "Fuso horário do MySQL",
-        "ru": "Часовой пояс MySQL",
-        "ko": "MySQL 시간대",
-        "zh-Hant": "MySQL 時區",
-        "zh": "MySQL 时区",
-        "tr": "MySQL saat dilimi"
       },
       "required": true,
       "type": "text"

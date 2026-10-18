@@ -14,7 +14,7 @@ RELEASE_TAG='v2.4.1'
 RELEASE_ZIP_URL="https://github.com/LoveCards/LoveCardsV2/releases/download/${RELEASE_TAG}/lovecards-web-frankenphp.zip"
 # Template zip of this installer repository (adjust owner/repo after publish).
 TEMPLATE_ZIP_URL='https://codeload.github.com/AidenZhang-AidenNovaLabs/lovecards-1panel/zip/refs/heads/main'
-TEMPLATE_REQUIRED='data.yml logo.png README.md 2.4.1/data.yml 2.4.1/docker-compose.yml'
+TEMPLATE_REQUIRED='data.yml logo.png README.md latest/data.yml latest/docker-compose.yml latest/scripts/init.sh'
 
 ui_msg() {
     if [ -n "${tui:-}" ]; then
@@ -427,14 +427,14 @@ if image_present; then
     image_note="镜像已就绪：$IMAGE_NAME"
 fi
 
-ui_msg "完成。请在 1Panel 刷新本地应用并安装 LoveCards / 2.4.1。
+ui_msg "完成。请在 1Panel 刷新本地应用并安装 LoveCards / latest。
 
 目标：$app_dir
 备份：${backup:-无}
 Docker：$image_note
 
-安装时填写 MySQL root/用户密码与端口；数据库名默认 lovecards。
-浏览器打开站点完成安装向导。后台默认地址 /admin。
-公网访问建议在 1Panel 网站配置 HTTPS 反向代理。
+在表单中选择已安装的 MySQL（1Panel 数据库服务），库名/用户/密码会自动生成，无需 root 密码。
+打开站点完成安装向导；向导里数据库主机填 1Panel 显示的数据库主机。
+后台默认地址 /admin。公网访问建议在 1Panel 网站配置 HTTPS 反向代理。
 
 运行中的容器未修改。"
